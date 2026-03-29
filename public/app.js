@@ -161,7 +161,7 @@ function revealWord() {
     $('imp-tag').classList.remove('hidden');
     $('word-sub').textContent = '⚠️ You are the imposter! Blend in!';
   } else {
-    $('word-sub').textContent = '✅ Remember your word. Find the imposter!';
+    $('word-sub').textContent = `✅ Your word is "${state.myWord}". Find the imposter!`;
   }
   $('btn-ready').disabled = false;
 }
@@ -228,10 +228,11 @@ socket.on('player-left', ({ players, playerName, newHostId }) => {
 socket.on('join-error', msg => showError('home-error', msg));
 socket.on('game-error', msg => showError('home-error', msg));
 
-socket.on('round-started', ({ round, word, isImposter, players, endTime, hostId }) => {
+socket.on('round-started', ({ round, category, word, isImposter, players, endTime, hostId }) => {
   clearTimer();
   state.round = round;
   state.myWord = word;
+  state.myCategory = category;
   state.isImposter = isImposter;
   state.players = players;
   state.hostId = hostId;
@@ -242,16 +243,13 @@ socket.on('round-started', ({ round, word, isImposter, players, endTime, hostId 
   $('flip-inner').classList.remove('flipped');
   $('flip-back').classList.remove('imp-back');
   $('imp-tag').classList.add('hidden');
-  $('word-display').textContent = word;
+  $('word-display').textContent = isImposter ? category : word;
+  $('category-display').textContent = category;
   $('word-sub').textContent = 'Tap the card to reveal';
   $('btn-ready').disabled = true;
   $('btn-ready').textContent = "I'M READY";
   $('word-round').textContent = `Round ${round}`;
   $('ready-txt').textContent = `0 / ${players.length} ready`;
-
-  if (isImposter) {
-    // subtle hint - the word is different but don't spoil it before flip
-  }
 
   if (state.isHost) {
     $('host-skip').classList.remove('hidden');
@@ -334,15 +332,15 @@ socket.on('vote-update', ({ voteCount, totalPlayers }) => {
   $('vote-status').textContent = `${voteCount} / ${totalPlayers} votes cast`;
 });
 
-socket.on('round-results', ({ imposterId, imposterName, civilianWord, imposterWord, imposterCaught, players, hostId }) => {
+socket.on('round-results', ({ imposterId, imposterName, category, word, imposterCaught, players, hostId }) => {
   clearTimer();
   state.players = players;
   state.hostId = hostId;
 
   $('results-round').textContent = `Round ${state.round}`;
   $('result-imp-name').textContent = imposterName.toUpperCase();
-  $('result-civ-word').textContent = civilianWord;
-  $('result-imp-word').textContent = imposterWord;
+  $('result-category').textContent = category;
+  $('result-word').textContent = word;
 
   const banner = $('outcome-banner');
   if (imposterCaught) {

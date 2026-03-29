@@ -25,29 +25,95 @@ function getServerURL() {
 const WORD_REVEAL_TIME = 60;
 const DISCUSSION_TIME = 180;
 
-const wordPairs = [
-  ["Pizza", "Flatbread"], ["Sushi", "Sashimi"], ["Burger", "Sandwich"],
-  ["Ice Cream", "Gelato"], ["Coffee", "Tea"], ["Chocolate", "Brownie"],
-  ["Pasta", "Noodles"], ["Tacos", "Burritos"], ["Beer", "Cider"],
-  ["Cake", "Pie"], ["Cheese", "Butter"], ["Salad", "Coleslaw"],
-  ["Lion", "Tiger"], ["Dolphin", "Shark"], ["Eagle", "Hawk"],
-  ["Wolf", "Fox"], ["Elephant", "Rhinoceros"], ["Penguin", "Puffin"],
-  ["Rabbit", "Hare"], ["Crocodile", "Alligator"], ["Butterfly", "Moth"],
-  ["Beach", "Lake"], ["Hospital", "Clinic"], ["Library", "Bookstore"],
-  ["Airport", "Train Station"], ["Castle", "Palace"], ["Hotel", "Hostel"],
-  ["School", "University"], ["Church", "Temple"], ["Stadium", "Arena"],
-  ["Football", "Rugby"], ["Tennis", "Badminton"], ["Swimming", "Diving"],
-  ["Basketball", "Volleyball"], ["Boxing", "Wrestling"], ["Skiing", "Snowboarding"],
-  ["Guitar", "Bass Guitar"], ["Piano", "Keyboard"], ["Clock", "Watch"],
-  ["Mirror", "Window"], ["Ring", "Bracelet"], ["Hat", "Cap"],
-  ["Candle", "Torch"], ["Newspaper", "Magazine"], ["Soap", "Shampoo"],
-  ["iPhone", "Android Phone"], ["Laptop", "Tablet"], ["Movie", "TV Show"],
-  ["Superman", "Batman"], ["Mountain", "Hill"], ["River", "Stream"],
-  ["Forest", "Jungle"], ["Rose", "Tulip"], ["Diamond", "Crystal"],
-  ["Subway", "Bus"], ["Bicycle", "Scooter"], ["Jeans", "Trousers"],
-  ["Sneakers", "Boots"], ["Backpack", "Handbag"], ["Umbrella", "Raincoat"],
-  ["Cat", "Dog"], ["Gold", "Silver"], ["Sun", "Moon"], ["Sword", "Knife"],
-  ["Vampire", "Zombie"], ["Wizard", "Witch"], ["Dragon", "Dinosaur"],
+// { category, word } — imposter gets the category, civilians get the word
+const wordList = [
+  // Food & Drink
+  { category: "Italian Food", word: "Pizza" },
+  { category: "Japanese Food", word: "Sushi" },
+  { category: "Fast Food", word: "Burger" },
+  { category: "Frozen Dessert", word: "Ice Cream" },
+  { category: "Hot Drink", word: "Coffee" },
+  { category: "Sweet Treat", word: "Chocolate" },
+  { category: "Pasta Dish", word: "Spaghetti" },
+  { category: "Mexican Food", word: "Tacos" },
+  { category: "Baked Good", word: "Croissant" },
+  { category: "Breakfast Food", word: "Pancakes" },
+  { category: "Seafood", word: "Lobster" },
+  { category: "Street Food", word: "Hot Dog" },
+  { category: "Alcoholic Drink", word: "Whiskey" },
+  { category: "Fruit", word: "Watermelon" },
+  { category: "Vegetable", word: "Broccoli" },
+  { category: "Spice", word: "Cinnamon" },
+  { category: "Cheese", word: "Mozzarella" },
+  { category: "Dessert", word: "Cheesecake" },
+  // Animals
+  { category: "Big Cat", word: "Lion" },
+  { category: "Sea Creature", word: "Dolphin" },
+  { category: "Bird of Prey", word: "Eagle" },
+  { category: "Wild Dog", word: "Wolf" },
+  { category: "Large Mammal", word: "Elephant" },
+  { category: "Flightless Bird", word: "Penguin" },
+  { category: "Small Mammal", word: "Rabbit" },
+  { category: "Reptile", word: "Crocodile" },
+  { category: "Insect", word: "Butterfly" },
+  { category: "Farm Animal", word: "Cow" },
+  { category: "Primate", word: "Gorilla" },
+  { category: "Ocean Fish", word: "Shark" },
+  { category: "Rodent", word: "Squirrel" },
+  { category: "Mythical Creature", word: "Dragon" },
+  // Places
+  { category: "Vacation Spot", word: "Beach" },
+  { category: "Medical Building", word: "Hospital" },
+  { category: "Knowledge Building", word: "Library" },
+  { category: "Transport Hub", word: "Airport" },
+  { category: "Historic Building", word: "Castle" },
+  { category: "Accommodation", word: "Hotel" },
+  { category: "Education Building", word: "School" },
+  { category: "Worship Building", word: "Church" },
+  { category: "Sports Venue", word: "Stadium" },
+  { category: "Shopping Place", word: "Mall" },
+  { category: "Outdoor Area", word: "Park" },
+  { category: "Entertainment Venue", word: "Casino" },
+  { category: "Government Building", word: "Courthouse" },
+  { category: "Natural Landmark", word: "Waterfall" },
+  // Sports
+  { category: "Team Sport", word: "Football" },
+  { category: "Racket Sport", word: "Tennis" },
+  { category: "Water Sport", word: "Swimming" },
+  { category: "Court Sport", word: "Basketball" },
+  { category: "Combat Sport", word: "Boxing" },
+  { category: "Winter Sport", word: "Skiing" },
+  { category: "Bat and Ball Sport", word: "Baseball" },
+  { category: "Martial Art", word: "Karate" },
+  { category: "Track Event", word: "Marathon" },
+  { category: "Extreme Sport", word: "Surfing" },
+  // Objects & Tech
+  { category: "String Instrument", word: "Guitar" },
+  { category: "Keyboard Instrument", word: "Piano" },
+  { category: "Timekeeping Device", word: "Clock" },
+  { category: "Jewelry", word: "Diamond Ring" },
+  { category: "Headwear", word: "Hat" },
+  { category: "Light Source", word: "Candle" },
+  { category: "Smartphone", word: "iPhone" },
+  { category: "Computer", word: "Laptop" },
+  { category: "Weapon", word: "Sword" },
+  { category: "Vehicle", word: "Motorcycle" },
+  { category: "Currency", word: "Gold Coin" },
+  { category: "Musical Instrument", word: "Drums" },
+  { category: "Footwear", word: "Sneakers" },
+  { category: "Bag", word: "Backpack" },
+  { category: "Outerwear", word: "Raincoat" },
+  // Pop Culture
+  { category: "Superhero", word: "Superman" },
+  { category: "Movie Genre", word: "Horror Film" },
+  { category: "Social Media App", word: "Instagram" },
+  { category: "Streaming Service", word: "Netflix" },
+  { category: "Video Game Console", word: "PlayStation" },
+  { category: "Fictional Monster", word: "Vampire" },
+  { category: "Fantasy Character", word: "Wizard" },
+  { category: "Card Game", word: "Poker" },
+  { category: "Board Game", word: "Chess" },
+  { category: "Dance Style", word: "Hip Hop" },
 ];
 
 const rooms = new Map();
@@ -73,8 +139,8 @@ function startRound(room) {
   room.votes = {};
   room.readyPlayers = new Set();
 
-  const pair = wordPairs[Math.floor(Math.random() * wordPairs.length)];
-  room.wordPair = pair;
+  const entry = wordList[Math.floor(Math.random() * wordList.length)];
+  room.wordPair = entry;
   room.imposter = room.players[Math.floor(Math.random() * room.players.length)].id;
 
   const endTime = Date.now() + WORD_REVEAL_TIME * 1000;
@@ -88,7 +154,8 @@ function startRound(room) {
     const isImposter = player.id === room.imposter;
     io.to(player.id).emit('round-started', {
       round: room.round,
-      word: isImposter ? pair[1] : pair[0],
+      category: entry.category,
+      word: isImposter ? null : entry.word,
       isImposter,
       players: room.players,
       endTime,
@@ -138,8 +205,8 @@ function resolveVotes(room) {
   io.to(room.code).emit('round-results', {
     imposterId: room.imposter,
     imposterName: imposterPlayer?.name ?? '???',
-    civilianWord: room.wordPair[0],
-    imposterWord: room.wordPair[1],
+    category: room.wordPair.category,
+    word: room.wordPair.word,
     imposterCaught,
     voteCounts,
     players: room.players,
