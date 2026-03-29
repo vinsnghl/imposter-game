@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0d0d1a">
+  <title>Imposter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="home-wrap">
+      <div class="logo">
+        <div class="logo-icon">👾</div>
+        <h1 class="logo-title">IMPOSTER</h1>
+        <p class="logo-sub">The word deduction game</p>
+      </div>
+      <div class="card">
+        <input id="input-name" class="input" type="text" placeholder="Your name" maxlength="20" autocomplete="off">
+        <button class="btn btn-primary btn-lg" id="btn-create">CREATE ROOM</button>
+        <div class="divider"><span>or join with a code</span></div>
+        <input id="input-code" class="input input-code" type="text" placeholder="ROOM CODE" maxlength="6" autocomplete="off">
+        <button class="btn btn-outline btn-lg" id="btn-join">JOIN ROOM</button>
+        <div id="home-error" class="error-msg hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOBBY -->
+  <div class="screen" id="screen-lobby">
+    <div class="screen-body">
+      <div class="lobby-top">
+        <p class="label">ROOM CODE</p>
+        <div class="code-big" id="lobby-code">------</div>
+        <div id="qr-wrap"></div>
+        <p class="join-hint">Scan QR or visit <strong id="server-url"></strong></p>
+      </div>
+      <div class="card">
+        <div class="players-hdr">
+          <span class="label" style="margin:0">PLAYERS</span>
+          <span id="player-count" class="muted-sm">0 / 12</span>
+        </div>
+        <div id="lobby-player-list" class="player-list"></div>
+      </div>
+      <div id="host-lobby-ctrl">
+        <p class="hint-sm" id="start-hint">Need 3+ players to start</p>
+        <button class="btn btn-primary btn-lg" id="btn-start" disabled>START GAME</button>
+      </div>
+      <div id="guest-lobby-wait" class="hidden">
+        <p class="waiting">Waiting for host to start…</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORD REVEAL -->
+  <div class="screen" id="screen-word">
+    <div class="screen-body center">
+      <div class="round-pill" id="word-round">Round 1</div>
+      <h2 class="screen-title">Your Secret Word</h2>
+      <p class="screen-sub" id="word-sub">Tap the card to reveal</p>
+
+      <div class="flip-card" id="word-card">
+        <div class="flip-inner" id="flip-inner">
+          <div class="flip-front">
+            <div class="q-mark">?</div>
+            <p class="flip-hint">tap to reveal</p>
+          </div>
+          <div class="flip-back" id="flip-back">
+            <div class="word-display" id="word-display">---</div>
+            <div id="imp-tag" class="imp-tag hidden">YOU ARE THE IMPOSTER</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="ready-area">
+        <p class="ready-txt" id="ready-txt">0 / 0 ready</p>
+        <button class="btn btn-primary" id="btn-ready" disabled>I'M READY</button>
+      </div>
+      <div id="host-skip" class="hidden">
+        <button class="btn btn-ghost sm" id="btn-skip-discuss">Skip → Start Discussion</button>
+      </div>
+      <div class="bar-wrap"><div class="bar" id="word-bar"></div></div>
+      <p class="countdown-sm" id="word-countdown"></p>
+    </div>
+  </div>
+
+  <!-- DISCUSSION -->
+  <div class="screen" id="screen-discuss">
+    <div class="screen-body">
+      <div class="round-pill" id="discuss-round">Round 1</div>
+      <h2 class="screen-title">Discuss!</h2>
+      <p class="screen-sub">Talk about your words. Who's the imposter?</p>
+      <div class="timer-num" id="discuss-timer">3:00</div>
+      <div class="bar-wrap"><div class="bar" id="discuss-bar"></div></div>
+      <div class="card" style="margin-top:20px">
+        <p class="label">PLAYERS</p>
+        <div id="discuss-players" class="player-list"></div>
+      </div>
+      <div id="host-vote-ctrl" class="hidden">
+        <button class="btn btn-primary btn-lg" id="btn-start-vote">START VOTING NOW</button>
+      </div>
+      <div id="guest-discuss-wait">
+        <p class="hint-sm">Voting starts automatically when timer ends</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOTING -->
+  <div class="screen" id="screen-vote">
+    <div class="screen-body">
+      <div class="round-pill" id="vote-round">Round 1</div>
+      <h2 class="screen-title">Vote!</h2>
+      <p class="screen-sub">Who do you think is the imposter?</p>
+      <p class="vote-status" id="vote-status">0 / 0 votes cast</p>
+      <div id="vote-grid" class="vote-grid"></div>
+      <div id="voted-wait" class="hidden voted-wait">
+        <div class="check-icon">✓</div>
+        <p class="waiting">Vote submitted! Waiting for others…</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="screen-results">
+    <div class="screen-body">
+      <div class="round-pill" id="results-round">Round 1</div>
+      <div class="imposter-reveal">
+        <p class="reveal-label">THE IMPOSTER WAS</p>
+        <div class="imposter-name" id="result-imp-name">---</div>
+      </div>
+      <div class="card words-card">
+        <div class="word-row">
+          <span class="wr-label">Everyone's word</span>
+          <span class="wr-val civ" id="result-civ-word">---</span>
+        </div>
+        <div class="word-row">
+          <span class="wr-label">Imposter's word</span>
+          <span class="wr-val imp" id="result-imp-word">---</span>
+        </div>
+      </div>
+      <div class="outcome-banner" id="outcome-banner">
+        <span class="outcome-icon" id="outcome-icon">🎉</span>
+        <span class="outcome-text" id="outcome-text">Imposter Caught!</span>
+      </div>
+      <div class="card">
+        <p class="label">SCOREBOARD</p>
+        <div id="scoreboard"></div>
+      </div>
+      <div id="host-results-ctrl" class="hidden">
+        <button class="btn btn-primary btn-lg" id="btn-next-round">NEXT ROUND</button>
+        <button class="btn btn-ghost" id="btn-back-lobby">Back to Lobby</button>
+      </div>
+      <div id="guest-results-wait">
+        <p class="waiting">Waiting for host…</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
